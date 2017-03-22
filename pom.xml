@@ -10,6 +10,11 @@
 
   <properties>
     <java.version>1.8</java.version>
+    <ocp.masterurl>https://192.168.64.25:8443</ocp.masterurl>
+    <ocp.namespace/>
+    <ocp.user/>
+    <ocp.password/>
+    <ocp.token/>
   </properties>
 
   <dependencies>
@@ -77,13 +82,13 @@
               <mainClass>org.jboss.OpenShiftClient</mainClass>
               <arguments>
                 <argument>--url</argument>
-                <argument>https://192.168.64.25:8443</argument>
+                <argument>${ocp.masterurl}</argument>
                 <argument>--namespace</argument>
-                <argument>default</argument>
+                <argument>${ocp.namespace}</argument>
                 <argument>--user</argument>
-                <argument>admin</argument>
+                <argument>${ocp.user}</argument>
                 <argument>--password</argument>
-                <argument>admin</argument>
+                <argument>${ocp.password}</argument>
               </arguments>
             </configuration>
           </plugin>
@@ -101,11 +106,11 @@
               <mainClass>org.jboss.OpenShiftClient</mainClass>
               <arguments>
                 <argument>--url</argument>
-                <argument>https://192.168.64.25:8443</argument>
+                <argument>${ocp.masterurl}</argument>
                 <argument>--namespace</argument>
-                <argument>default</argument>
+                <argument>${ocp.namespace}</argument>
                 <argument>--token</argument>
-                <argument>Cn5ggT5ai2EiPeIPcPWZWsjFJu-wE0Dqk7oSPnT1WTw</argument>
+                <argument>${ocp.token}</argument>
               </arguments>
             </configuration>
           </plugin>
