@@ -28,6 +28,6 @@ mvn clean compile exec:java -Dexec.args="--url https://192.168.64.25:8443 --name
 ``` 
 * Connect using the access token (= oc whoami -t)
 ``` 
-mvn clean compile exec:java -Dexec.args="--url https://192.168.64.25:8443 --namespace test --token N8lJ_TILwEfoE1BGQ0JSVE5Ordc-3YuW-SdZyv4iePA"
+mvn clean compile exec:java -Dexec.args="--url https://192.168.64.25:8443 --namespace test --token DexGhitaeWIkH_DTlJMCHFWwRRkUPsCE0QsSuU9U8n8"
 ```
 
