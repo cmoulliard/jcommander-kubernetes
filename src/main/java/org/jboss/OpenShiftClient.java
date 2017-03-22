@@ -88,11 +88,6 @@ public class OpenShiftClient {
             log("Master URL : " + config.getMasterUrl());
             log("==========================");
 
-            Namespace namespace = client.namespaces().withName(cmdArgs.namespace).get();
-            log(
-                    "Type : " + namespace.getKind() + ", " + namespace.getMetadata().getName()
-            );
-
             listPods(client);
             listServices(client);
 

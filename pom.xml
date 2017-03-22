@@ -66,6 +66,9 @@
             </goals>
           </execution>
         </executions>
+        <configuration>
+          <mainClass>org.jboss.OpenShiftClient</mainClass>
+        </configuration>
       </plugin>
     </plugins>
   </build>

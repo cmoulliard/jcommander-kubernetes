@@ -11,7 +11,7 @@ mvn clean install
 ```
 minishift start
 oc login -u system:admin
-oc adm policy add-cluster-role-to-user clsuter-role to admin
+oc adm policy add-cluster-role-to-user cluster-role to admin
 oc login -u admin -p admin 
 ```
 
@@ -19,10 +19,10 @@ oc login -u admin -p admin
 
 * Connect with the username and password
 ```
-mvn clean compile exec:java -Plogin -Docp.masterurl=https://192.168.64.25:8443 -Docp.namespace=test -Docp.user=admin -Docp.password=admin
+mvn clean compile exec:java -Dexec.args="--url https://192.168.64.25:8443 --namespace test --user test --password test"
 ``` 
 * Connect using the access token (= oc whoami -t)
 ``` 
-mvn clean compile exec:java -Ptoken -Docp.masterurl=https://192.168.64.25:8443 -Docp.namespace=test -Docp.token=m30C_AdfgoCGqykkaZbvMHbDp4gZDRSERxk17foxywg 
+mvn clean compile exec:java -Dexec.args="--url https://192.168.64.25:8443 --namespace test --token=m30C_AdfgoCGqykkaZbvMHbDp4gZDRSERxk17foxywg 
 ```
 
