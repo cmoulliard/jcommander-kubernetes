@@ -15,7 +15,12 @@ oc adm policy add-cluster-role-to-user cluster-role to admin
 oc login -u admin -p admin 
 ```
 
-* Next, test the jcommander using one of these command where you will change the parameters 
+* Create a namespace `test` using the user `test`
+```
+oc login -u test -p test -n test
+```
+
+* Next, test the jcommander using one of these command 
 
 * Connect with the username and password
 ```
@@ -23,6 +28,6 @@ mvn clean compile exec:java -Dexec.args="--url https://192.168.64.25:8443 --name
 ``` 
 * Connect using the access token (= oc whoami -t)
 ``` 
-mvn clean compile exec:java -Dexec.args="--url https://192.168.64.25:8443 --namespace test --token=m30C_AdfgoCGqykkaZbvMHbDp4gZDRSERxk17foxywg 
+mvn clean compile exec:java -Dexec.args="--url https://192.168.64.25:8443 --namespace test --token N8lJ_TILwEfoE1BGQ0JSVE5Ordc-3YuW-SdZyv4iePA"
 ```
 

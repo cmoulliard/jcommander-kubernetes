@@ -79,7 +79,7 @@ public class OpenShiftClient {
                 .withUsername(cmdArgs.user)
                 .withNamespace(cmdArgs.namespace)
                 // Token is required otherwise the current user authenticated on the console (oc login) will be used
-                //.withOauthToken(oclient.getAuthorizationContext().getToken())
+                .withOauthToken(oclient.getAuthorizationContext().getToken())
                 .withMasterUrl(cmdArgs.url)
                 .build();
 
