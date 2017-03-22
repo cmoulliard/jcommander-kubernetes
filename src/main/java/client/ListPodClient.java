@@ -98,7 +98,15 @@ public class ListPodClient {
 
             client.close();
         } catch (KubernetesClientException e) {
+            e.printStackTrace();
             logger.error(e.getMessage(), e);
+
+            Throwable[] suppressed = e.getSuppressed();
+            if (suppressed != null) {
+                for (Throwable t : suppressed) {
+                    logger.error(t.getMessage(), t);
+                }
+            }
         }
     }
 
