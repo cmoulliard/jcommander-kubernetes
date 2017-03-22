@@ -25,6 +25,8 @@ import com.openshift.restclient.IClient;
 import io.fabric8.kubernetes.api.model.Namespace;
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.api.model.PodList;
+import io.fabric8.kubernetes.api.model.ReplicationController;
+import io.fabric8.kubernetes.api.model.ReplicationControllerBuilder;
 import io.fabric8.kubernetes.api.model.Service;
 import io.fabric8.kubernetes.api.model.ServiceList;
 import io.fabric8.kubernetes.api.model.ServiceSpec;
@@ -76,20 +78,30 @@ public class OpenShiftClient {
                 .withTrustCerts(true)
                 .withUsername(cmdArgs.user)
                 .withNamespace(cmdArgs.namespace)
-                // Token is required otherwise the current user authentified on the console (oc login) will be used
-                .withOauthToken(oclient.getAuthorizationContext().getToken())
+                // Token is required otherwise the current user authenticated on the console (oc login) will be used
+                //.withOauthToken(oclient.getAuthorizationContext().getToken())
                 .withMasterUrl(cmdArgs.url)
                 .build();
 
         try (final KubernetesClient client = new DefaultKubernetesClient(config)) {
-
             log("Username  : " + cmdArgs.user);
             log("Namespace : " + cmdArgs.namespace);
             log("Master URL : " + config.getMasterUrl());
             log("==========================");
 
+            log("Created RC", client.replicationControllers().inNamespace("test").create(createReplicationController()));
+
+            // Get the RC by label
+            log("Get RC by label", client.replicationControllers().withLabel("server", "nginx").list());
+            // Get the RC without label
+            log("Get RC without label", client.replicationControllers().withoutLabel("server", "apache").list());
+
+            Thread.sleep(5000);
             listPods(client);
             listServices(client);
+
+            client.replicationControllers().inNamespace("test").withName("nginx-controller").delete();
+            log("Deleted RC");
 
             client.close();
         } catch (KubernetesClientException e) {
@@ -129,6 +141,22 @@ public class OpenShiftClient {
                            "Port if : " + serviceSpec.getPorts().get(0).getName()
             );
         }
+    }
+
+    private static ReplicationController createReplicationController() {
+        // Create an RC
+        return new ReplicationControllerBuilder()
+                .withNewMetadata().withName("nginx-controller").addToLabels("server", "nginx").endMetadata()
+                .withNewSpec().withReplicas(2)
+                .withNewTemplate()
+                .withNewMetadata().addToLabels("server", "nginx").endMetadata()
+                .withNewSpec()
+                .addNewContainer().withName("nginx").withImage("nginx")
+                .addNewPort().withContainerPort(80).endPort()
+                .endContainer()
+                .endSpec()
+                .endTemplate()
+                .endSpec().build();
     }
 
     private static void log(String action, Object obj) {
