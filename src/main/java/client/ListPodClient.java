@@ -128,48 +128,4 @@ public class ListPodClient {
         }
     }
 
-    public static Config parseConfig(File file) throws IOException {
-        ObjectMapper mapper = null;
-        File kubeConfigFile = new File(
-                Utils.getSystemPropertyOrEnvVar(KUBERNETES_KUBECONFIG_FILE,
-                        new File(getHomeDir(), ".kube" + File.separator + "config").toString()));
-        boolean kubeConfigFileExists = Files.isRegularFile(kubeConfigFile.toPath());
-        if (kubeConfigFileExists) {
-            mapper = new ObjectMapper(new YAMLFactory());
-        }
-        return mapper.readValue(kubeConfigFile, Config.class);
-    }
-
-    private static String getHomeDir() {
-        String osName = System.getProperty("os.name").toLowerCase();
-        if (osName.startsWith("win")) {
-            String homeDrive = System.getenv("HOMEDRIVE");
-            String homePath = System.getenv("HOMEPATH");
-            if (homeDrive != null && !homeDrive.isEmpty() && homePath != null && !homePath.isEmpty()) {
-                String homeDir = homeDrive + homePath;
-                File f = new File(homeDir);
-                if (f.exists() && f.isDirectory()) {
-                    return homeDir;
-                }
-            }
-            String userProfile = System.getenv("USERPROFILE");
-            if (userProfile != null && !userProfile.isEmpty()) {
-                File f = new File(userProfile);
-                if (f.exists() && f.isDirectory()) {
-                    return userProfile;
-                }
-            }
-        }
-        String home = System.getenv("HOME");
-        if (home != null && !home.isEmpty()) {
-            File f = new File(home);
-            if (f.exists() && f.isDirectory()) {
-                return home;
-            }
-        }
-
-        //Fall back to user.home should never really get here
-        return System.getProperty("user.home", ".");
-    }
-
 }
