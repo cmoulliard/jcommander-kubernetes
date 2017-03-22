@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package client;
+package org.jboss;
 
 import java.io.IOException;
 import java.util.List;
@@ -36,9 +36,9 @@ import io.fabric8.kubernetes.client.KubernetesClientException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ListPodClient {
+public class OpenShiftClient {
 
-    private static final Logger logger = LoggerFactory.getLogger(ListPodClient.class);
+    private static final Logger logger = LoggerFactory.getLogger(OpenShiftClient.class);
 
     private CommandArgs cmdArgs;
 
@@ -47,7 +47,7 @@ public class ListPodClient {
         CommandArgs cmdArgs = new CommandArgs();
         JCommander cmdParser = new JCommander(cmdArgs);
         try {
-            cmdParser.setProgramName(ListPodClient.class.getName());
+            cmdParser.setProgramName(OpenShiftClient.class.getName());
             cmdParser.parse(args);
         } catch (ParameterException e) {
             StringBuilder info = new StringBuilder("Specify the url of the server to access using --url\n");

@@ -74,7 +74,7 @@
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>exec-maven-plugin</artifactId>
             <configuration>
-              <mainClass>client.ListPodClient</mainClass>
+              <mainClass>org.jboss.OpenShiftClient</mainClass>
               <arguments>
                 <argument>--url</argument>
                 <argument>https://192.168.64.25:8443</argument>
@@ -98,7 +98,7 @@
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>exec-maven-plugin</artifactId>
             <configuration>
-              <mainClass>client.ListPodClient</mainClass>
+              <mainClass>org.jboss.OpenShiftClient</mainClass>
               <arguments>
                 <argument>--url</argument>
                 <argument>https://192.168.64.25:8443</argument>

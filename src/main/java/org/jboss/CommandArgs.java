@@ -1,4 +1,4 @@
-package client;
+package org.jboss;
 
 import com.beust.jcommander.Parameter;
 
