@@ -27,17 +27,23 @@
     </dependency>
 
     <!-- Java REST Client for Kubernetes/OpenShift -->
-    <dependency>
+<!--    <dependency>
       <groupId>com.openshift</groupId>
       <artifactId>openshift-restclient-java</artifactId>
       <version>5.5.0.Final</version>
-    </dependency>
+    </dependency>-->
 
     <!-- Kubernetes Client -->
     <dependency>
       <groupId>io.fabric8</groupId>
       <artifactId>kubernetes-client</artifactId>
+      <!-- 2.2.7 -->
       <version>1.4.19</version>
+    </dependency>
+    <dependency>
+      <groupId>io.fabric8</groupId>
+      <artifactId>openshift-client</artifactId>
+      <version>1.4.33</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -67,7 +73,7 @@
           </execution>
         </executions>
         <configuration>
-          <mainClass>org.jboss.OpenShiftClient</mainClass>
+          <mainClass>org.jboss.OpenShiftCommand</mainClass>
         </configuration>
       </plugin>
     </plugins>
@@ -82,7 +88,7 @@
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>exec-maven-plugin</artifactId>
             <configuration>
-              <mainClass>org.jboss.OpenShiftClient</mainClass>
+              <mainClass>org.jboss.OpenShiftCommand</mainClass>
               <arguments>
                 <argument>--url</argument>
                 <argument>${ocp.masterurl}</argument>
@@ -106,7 +112,7 @@
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>exec-maven-plugin</artifactId>
             <configuration>
-              <mainClass>org.jboss.OpenShiftClient</mainClass>
+              <mainClass>org.jboss.OpenShiftCommand</mainClass>
               <arguments>
                 <argument>--url</argument>
                 <argument>${ocp.masterurl}</argument>
