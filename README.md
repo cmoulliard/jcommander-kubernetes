@@ -1,15 +1,28 @@
 # Instructions
 
+* Git clone, build the project
+```
 git clone the project
+cd jcommander-kubernetes
+mvn clean install
+```
 
-start minishift
+* Start minishift and give more rights to theadmin user
+```
+minishift start
+oc login -u system:admin
+oc adm policy add-cluster-role-to-user clsuter-role to admin
+oc login -u admin -p admin 
+```
 
-add cluster role to admin user 
+* Next, test the jcommander using one of these command where you will change the parameters 
 
-and next run this command 
-
+* Connect with the username and password
+```
 mvn clean compile exec:java -Plogin -Docp.masterurl=https://192.168.64.25:8443 -Docp.namespace=test -Docp.user=admin -Docp.password=admin
- 
+``` 
+* Connect using the access token (= oc whoami -t)
+``` 
 mvn clean compile exec:java -Ptoken -Docp.masterurl=https://192.168.64.25:8443 -Docp.namespace=test -Docp.token=m30C_AdfgoCGqykkaZbvMHbDp4gZDRSERxk17foxywg 
-
+```
 
