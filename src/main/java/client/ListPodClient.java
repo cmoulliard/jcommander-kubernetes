@@ -71,13 +71,11 @@ public class ListPodClient {
         log("Token : " + oclient.getAuthorizationContext().getToken());
         log("==========================");
 
-        //log("Pod : " + oclient.list("Pod"));
-
         // Configure the Kubernetes client
         Config config = new ConfigBuilder()
                 .withTrustCerts(true)
                 .withUsername(cmdArgs.user)
-                .withNamespace("default")
+                .withNamespace(cmdArgs.namespace)
                 // Token is required otherwise the current user authentified on the console (oc login) will be used
                 .withOauthToken(oclient.getAuthorizationContext().getToken())
                 .withMasterUrl(cmdArgs.url)
