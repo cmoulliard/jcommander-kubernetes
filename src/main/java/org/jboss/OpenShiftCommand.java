@@ -89,19 +89,24 @@ public class OpenShiftCommand extends AbstractCommand {
 				listPods(client);
 			}
 
+			if((cmdParams[0].toLowerCase().equals(GET)) && (cmdParams[1].toLowerCase().equals(POD)) && (cmdParams[2].toLowerCase() != null)) {
+				getPod(client,cmdParams[2].toLowerCase());
+			}
+
 			if((cmdParams[0].toLowerCase().equals(GET)) && (cmdParams[1].toLowerCase().equals(SERVICES))) {
 				listServices(client);
+			}
+
+			if((cmdParams[0].toLowerCase().equals(GET)) && (cmdParams[1].toLowerCase().equals(SERVICE)) && (cmdParams[2].toLowerCase() != null)) {
+				getService(client,cmdParams[2].toLowerCase());
 			}
 
 			if((cmdParams[0].toLowerCase().equals(GET)) && (cmdParams[1].toLowerCase().equals(ROUTES))) {
 				listRoutes(client);
 			}
 
-			if((cmdParams[0].toLowerCase().equals(GET)) && (cmdParams[1].toLowerCase().equals(ROUTE))) {
-				if(cmdParams[2].toLowerCase() != null) {
+			if((cmdParams[0].toLowerCase().equals(GET)) && (cmdParams[1].toLowerCase().equals(ROUTE)) && (cmdParams[2].toLowerCase() != null)) {
 					getRoute(client,cmdParams[2].toLowerCase());
-				}
-				listRoutes(client);
 			}
 
 		}

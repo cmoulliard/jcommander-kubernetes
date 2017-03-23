@@ -17,8 +17,6 @@ package org.jboss;
 
 import java.util.List;
 
-import com.beust.jcommander.JCommander;
-import com.beust.jcommander.ParameterException;
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.api.model.PodList;
 import io.fabric8.kubernetes.api.model.ReplicationController;
@@ -26,16 +24,9 @@ import io.fabric8.kubernetes.api.model.ReplicationControllerBuilder;
 import io.fabric8.kubernetes.api.model.Service;
 import io.fabric8.kubernetes.api.model.ServiceList;
 import io.fabric8.kubernetes.api.model.ServiceSpec;
-import io.fabric8.kubernetes.client.Config;
-import io.fabric8.kubernetes.client.ConfigBuilder;
-import io.fabric8.kubernetes.client.KubernetesClient;
-import io.fabric8.kubernetes.client.KubernetesClientException;
-import io.fabric8.openshift.api.model.Project;
-import io.fabric8.openshift.api.model.ProjectRequest;
 import io.fabric8.openshift.api.model.Route;
 import io.fabric8.openshift.api.model.RouteList;
 import io.fabric8.openshift.api.model.RouteSpec;
-import io.fabric8.openshift.client.DefaultOpenShiftClient;
 import io.fabric8.openshift.client.OpenShiftClient;
 import org.jboss.util.TableBuilder;
 import org.slf4j.Logger;
@@ -47,7 +38,9 @@ public class AbstractCommand {
 
 	protected final static String GET = "get";
 	protected final static String PODS = "pods";
+	protected final static String POD = "pod";
 	protected final static String SERVICES = "services";
+	protected final static String SERVICE = "service";
 	protected final static String ROUTES = "routes";
 	protected final static String ROUTE = "route";
 
@@ -56,12 +49,28 @@ public class AbstractCommand {
 		List<Pod> pods = podList.getItems();
 		TableBuilder builder = new TableBuilder();
 		builder.addRow("Pods\n");
-		builder.addRow("NAME","STATUS","IP");
-		builder.addRow("====","======","==");
+		builder.addRow("NAME", "STATUS", "IP");
+		builder.addRow("====", "======", "==");
 		for (Pod pod : pods) {
-			builder.addRow(pod.getMetadata().getName(),
-					pod.getStatus().getPhase(),
+			builder.addRow(pod.getMetadata().getName(), pod.getStatus().getPhase(),
 					pod.getStatus().getPodIP());
+		}
+		log(builder.toString());
+	}
+
+	protected static void getPod(OpenShiftClient client, String content) {
+		PodList podList = client.pods().list();
+		List<Pod> pods = podList.getItems();
+		TableBuilder builder = new TableBuilder();
+		builder.addRow("Pod\n");
+		builder.addRow("NAME", "STATUS", "IP");
+		builder.addRow("====", "======", "==");
+		for (Pod pod : pods) {
+			if(pod.getMetadata().getName().equals(content)) {
+				builder.addRow(pod.getMetadata().getName(), pod.getStatus().getPhase(),
+						pod.getStatus().getPodIP());
+			}
+			break;
 		}
 		log(builder.toString());
 	}
@@ -71,13 +80,31 @@ public class AbstractCommand {
 		List<Service> services = serviceList.getItems();
 		TableBuilder builder = new TableBuilder();
 		builder.addRow("Services\n");
-		builder.addRow("NAME","CLUSTER-IP","PORT");
-		builder.addRow("====","==========","====");
+		builder.addRow("NAME", "CLUSTER-IP", "PORT");
+		builder.addRow("====", "==========", "====");
 		for (Service service : services) {
 			ServiceSpec serviceSpec = service.getSpec();
-			builder.addRow(service.getMetadata().getName(),
-					serviceSpec.getClusterIP(),
+			builder.addRow(service.getMetadata().getName(), serviceSpec.getClusterIP(),
 					serviceSpec.getPorts().get(0).getName());
+		}
+		log(builder.toString());
+	}
+
+	protected static void getService(OpenShiftClient client, String content) {
+		ServiceList serviceList = client.services().list();
+		List<Service> services = serviceList.getItems();
+		TableBuilder builder = new TableBuilder();
+		builder.addRow("Service\n");
+		builder.addRow("NAME", "CLUSTER-IP", "PORT");
+		builder.addRow("====", "==========", "====");
+		for (Service service : services) {
+			if (service.getMetadata().getName().equals(content)) {
+				ServiceSpec serviceSpec = service.getSpec();
+				builder.addRow(service.getMetadata().getName(),
+						serviceSpec.getClusterIP(),
+						serviceSpec.getPorts().get(0).getName());
+			}
+			break;
 		}
 		log(builder.toString());
 	}
@@ -87,12 +114,11 @@ public class AbstractCommand {
 		List<Route> routes = routeList.getItems();
 		TableBuilder builder = new TableBuilder();
 		builder.addRow("Routes\n");
-		builder.addRow("NAME","HOST/PORT","SERVICES","PORT");
-		builder.addRow("====","=========","========","====");
+		builder.addRow("NAME", "HOST/PORT", "SERVICES", "PORT");
+		builder.addRow("====", "=========", "========", "====");
 		for (Route route : routes) {
 			RouteSpec routeSpec = route.getSpec();
-			builder.addRow(route.getMetadata().getName(),
-					routeSpec.getHost(),
+			builder.addRow(route.getMetadata().getName(), routeSpec.getHost(),
 					routeSpec.getTo().getName(),
 					routeSpec.getPort().getTargetPort().getStrVal());
 		}
@@ -104,13 +130,14 @@ public class AbstractCommand {
 		List<Route> routes = routeList.getItems();
 		TableBuilder builder = new TableBuilder();
 		builder.addRow("Route\n");
-		builder.addRow("NAME","HOST/PORT","SERVICES","PORT");
-		builder.addRow("====","=========","========","====");
+		builder.addRow("NAME", "HOST/PORT", "SERVICES", "PORT");
+		builder.addRow("====", "=========", "========", "====");
 		for (Route route : routes) {
-			if(route.getMetadata().getName().equals(content)) {
+			if (route.getMetadata().getName().equals(content)) {
 				RouteSpec routeSpec = route.getSpec();
 				builder.addRow(route.getMetadata().getName(), routeSpec.getHost(),
-						routeSpec.getTo().getName(), routeSpec.getPort().getTargetPort().getStrVal());
+						routeSpec.getTo().getName(),
+						routeSpec.getPort().getTargetPort().getStrVal());
 			}
 			break;
 		}
@@ -119,15 +146,10 @@ public class AbstractCommand {
 
 	protected static ReplicationController createReplicationController() {
 		// Create a RC
-		return new ReplicationControllerBuilder()
-				.withNewMetadata()
-				.withName("nginx-controller").addToLabels("server", "nginx")
-				.endMetadata()
-				.withNewSpec()
-				.withReplicas(2).withNewTemplate()
-				.withNewMetadata()
-				.addToLabels("server", "nginx")
-				.endMetadata().withNewSpec()
+		return new ReplicationControllerBuilder().withNewMetadata()
+				.withName("nginx-controller").addToLabels("server", "nginx").endMetadata()
+				.withNewSpec().withReplicas(2).withNewTemplate().withNewMetadata()
+				.addToLabels("server", "nginx").endMetadata().withNewSpec()
 				.addNewContainer().withName("nginx").withImage("nginx").addNewPort()
 				.withContainerPort(80).endPort().endContainer().endSpec().endTemplate()
 				.endSpec().build();
