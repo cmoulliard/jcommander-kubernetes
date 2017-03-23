@@ -42,7 +42,6 @@ java -jar target/openshift-client-1.0-SNAPSHOT.jar  \
 ```
 
 ### List the pods
-
 ```
 java -jar target/openshift-client-1.0-SNAPSHOT.jar  \
             --url https://192.168.64.25:8443 \
@@ -78,6 +77,26 @@ java -jar target/openshift-client-1.0-SNAPSHOT.jar  \
 2017-03-23 18:29:30 INFO  AbstractCommand:93 - Service : docker-registry, Cluster IP : 172.30.241.217, Port if : 5000-tcp
 2017-03-23 18:29:30 INFO  AbstractCommand:93 - Service : kubernetes, Cluster IP : 172.30.0.1, Port if : https
 2017-03-23 18:29:30 INFO  AbstractCommand:93 - Service : router, Cluster IP : 172.30.49.159, Port if : 80-tcp
+
+```
+
+### Token based with OpenShift Online
+```
+java -jar target/openshift-client-1.0-SNAPSHOT.jar  \
+>             --url https://api.engint.openshift.com \
+>             --namespace secure \
+>             --token Xral1af_SRe01FYjZtx66wT6sGMsMQjg1oEg7anlW0E \
+>             --cmd 'get pods'
+2017-03-23 18:55:25 INFO  AbstractCommand:93 - Username  : admin
+2017-03-23 18:55:26 INFO  AbstractCommand:93 - Namespace : secure
+2017-03-23 18:55:26 INFO  AbstractCommand:93 - Master URL : https://api.engint.openshift.com/
+2017-03-23 18:55:26 INFO  AbstractCommand:93 - ==========================
+2017-03-23 18:55:27 INFO  AbstractCommand:93 - ============ Pods ===========
+2017-03-23 18:55:27 INFO  AbstractCommand:93 - Pod : eap-app-1-build, Status : Succeeded, IP : 10.1.1.76
+2017-03-23 18:55:27 INFO  AbstractCommand:93 - Pod : eap-app-1-deploy, Status : Failed, IP : 10.1.7.132
+2017-03-23 18:55:27 INFO  AbstractCommand:93 - Pod : sso-1-deploy, Status : Failed, IP : 10.1.4.186
+2017-03-23 18:55:27 INFO  AbstractCommand:93 - Pod : tomcat-1-40who, Status : Running, IP : 10.1.7.141
+2017-03-23 18:55:27 INFO  AbstractCommand:93 - Pod : tomcat-1-build, Status : Succeeded, IP : 10.1.7.140
 
 ```
 

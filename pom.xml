@@ -79,7 +79,7 @@
           </execution>
         </executions>
         <configuration>
-          <mainClass>org.jboss.OpenShiftCommand</mainClass>
+          <mainClass>org.jboss.OpenShiftDeploymentExample</mainClass>
         </configuration>
       </plugin>
 

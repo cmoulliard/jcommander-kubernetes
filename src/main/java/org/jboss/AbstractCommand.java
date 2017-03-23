@@ -32,6 +32,9 @@ import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClientException;
 import io.fabric8.openshift.api.model.Project;
 import io.fabric8.openshift.api.model.ProjectRequest;
+import io.fabric8.openshift.api.model.Route;
+import io.fabric8.openshift.api.model.RouteList;
+import io.fabric8.openshift.api.model.RouteSpec;
 import io.fabric8.openshift.client.DefaultOpenShiftClient;
 import io.fabric8.openshift.client.OpenShiftClient;
 import org.slf4j.Logger;
@@ -66,6 +69,17 @@ public class AbstractCommand {
 			log("Service : " + service.getMetadata().getName() + ", " + "Cluster IP : "
 					+ serviceSpec.getClusterIP() + ", " + "Port if : " + serviceSpec
 					.getPorts().get(0).getName());
+		}
+	}
+
+	protected static void listRoutes(KubernetesClient client) {
+		RouteList routeList = null;
+		List<Route> routes = routeList.getItems();
+		log("============ Routes ===========");
+		for (Route route : routes) {
+			RouteSpec routeSpec = route.getSpec();
+			log("Route : " + route.getMetadata().getName() + ", "
+					+ "Status : " + route.getStatus());
 		}
 	}
 

@@ -82,20 +82,6 @@ public class OpenShiftCommand extends AbstractCommand {
 			log("Master URL : " + config.getMasterUrl());
 			log("==========================");
 
-			// Let's create the project if it doesn't exist
-
-			Project project = client.projects().withName(cmdArgs.namespace).get();
-			if (project == null) {
-				log("Project doesn't exist. So it will be created !");
-				request = client.projectrequests()
-						        .createNew()
-						        .withNewMetadata()
-						          .withName(cmdArgs.namespace)
-						        .endMetadata()
-						        .done();
-				log("The project " + cmdArgs.namespace + " has been created !");
-			}
-
 			// Extract the command
 			String[] cmdParams = cmdArgs.cmd.split(" ");
 
@@ -108,7 +94,7 @@ public class OpenShiftCommand extends AbstractCommand {
 			}
 
 			if((cmdParams[0].toLowerCase().equals(GET)) && (cmdParams[1].toLowerCase().equals(ROUTES))) {
-				listServices(client);
+				listRoutes(client);
 			}
 
 		}
@@ -121,12 +107,6 @@ public class OpenShiftCommand extends AbstractCommand {
 				for (Throwable t : suppressed) {
 					logger.error(t.getMessage(), t);
 				}
-			}
-		}
-		finally {
-			if (request != null) {
-				client.projects().withName(cmdArgs.namespace).delete();
-				log("Project " + cmdArgs.namespace + " has been deleted.");
 			}
 		}
 	}
