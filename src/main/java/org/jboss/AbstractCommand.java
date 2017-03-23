@@ -65,7 +65,7 @@ public class AbstractCommand {
 		log(builder.toString());
 	}
 
-	protected static void listServices(KubernetesClient client) {
+	protected static void listServices(OpenShiftClient client) {
 		ServiceList serviceList = client.services().list();
 		List<Service> services = serviceList.getItems();
 		TableBuilder builder = new TableBuilder();
@@ -81,14 +81,21 @@ public class AbstractCommand {
 		log(builder.toString());
 	}
 
-	protected static void listRoutes(KubernetesClient client) {
-		RouteList routeList = null;
+	protected static void listRoutes(OpenShiftClient client) {
+		RouteList routeList = client.routes().list();
 		List<Route> routes = routeList.getItems();
-		log("============ Routes ===========");
+		TableBuilder builder = new TableBuilder();
+		builder.addRow("Routes\n");
+		builder.addRow("NAME","HOST/PORT","SERVICES","PORT");
+		builder.addRow("====","=========","========","====");
 		for (Route route : routes) {
 			RouteSpec routeSpec = route.getSpec();
-			log("Route : " + route.getMetadata().getName() + ", " + "Status : " + route.getStatus());
+			builder.addRow(route.getMetadata().getName(),
+					routeSpec.getHost(),
+					routeSpec.getTo().getName(),
+					routeSpec.getPort().getTargetPort().getStrVal());
 		}
+		log(builder.toString());
 	}
 
 	protected static ReplicationController createReplicationController() {

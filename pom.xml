@@ -15,6 +15,10 @@
     <ocp.user/>
     <ocp.password/>
     <ocp.token/>
+
+    <!-- 2.2.7, 1.4.19 -->
+    <fabric8.kubernetes.client.version>2.2.7</fabric8.kubernetes.client.version>
+    <fabric8.openshift.client.version>2.2.7</fabric8.openshift.client.version>
   </properties>
 
   <dependencies>
@@ -26,25 +30,16 @@
       <version>1.60</version>
     </dependency>
 
-    <!-- Java REST Client for Kubernetes/OpenShift -->
-<!--    <dependency>
-      <groupId>com.openshift</groupId>
-      <artifactId>openshift-restclient-java</artifactId>
-      <version>5.5.0.Final</version>
-    </dependency>-->
-
     <!-- Kubernetes Client -->
     <dependency>
       <groupId>io.fabric8</groupId>
       <artifactId>kubernetes-client</artifactId>
-      <!-- 2.2.7, 1.4.19-->
-      <version>2.2.7</version>
+      <version>${fabric8.kubernetes.client.version}</version>
     </dependency>
     <dependency>
       <groupId>io.fabric8</groupId>
       <artifactId>openshift-client</artifactId>
-      <!--<version>1.4.19</version>-->
-      <version>2.2.7</version>
+      <version>${fabric8.openshift.client.version}</version>
     </dependency>
 
     <!-- Utils -->

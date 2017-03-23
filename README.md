@@ -91,6 +91,26 @@ tomcat         172.30.55.220  8080-tcp
 
 ```
 
+### List the Routes
+```
+java -jar target/openshift-client-1.0-SNAPSHOT.jar  \
+            --url https://192.168.64.25:8443 \
+            --namespace default \
+            --user admin  \
+            --password admin  \
+            --cmd 'get routes'
+            
+2017-03-23 19:38:44 INFO  AbstractCommand:122 - Username  : admin
+2017-03-23 19:38:44 INFO  AbstractCommand:122 - Namespace : myproject
+2017-03-23 19:38:44 INFO  AbstractCommand:122 - Master URL : https://192.168.64.25:8443/
+2017-03-23 19:38:44 INFO  AbstractCommand:122 - ==========================
+2017-03-23 19:38:45 INFO  AbstractCommand:122 - Routes
+ 
+NAME    HOST/PORT                         SERVICES PORT     
+====    =========                         ======== ====     
+wf      wf-myproject.192.168.64.25.nip.io wf       8080-tcp 
+```            
+
 ### Token based with OpenShift Online
 ```
 java -jar target/openshift-client-1.0-SNAPSHOT.jar  \

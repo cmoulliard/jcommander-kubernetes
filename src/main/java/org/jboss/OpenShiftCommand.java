@@ -98,7 +98,7 @@ public class OpenShiftCommand extends AbstractCommand {
 			}
 
 		}
-		catch (KubernetesClientException e) {
+		catch (Exception e) {
 			e.printStackTrace();
 			logger.error(e.getMessage(), e);
 
