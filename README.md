@@ -33,12 +33,24 @@ mvn clean compile exec:java -Dexec.args="--url https://192.168.64.25:8443 --name
 
 ## Using the command line tool
 ```
-java -jar target/openshift-client-1.0-SNAPSHOT.jar --url https://192.168.64.25:8443 --namespace test --user test --password test --cmd 'get pods' 
+java -jar target/openshift-client-1.0-SNAPSHOT.jar  \
+            --url https://192.168.64.25:8443 \
+            --namespace default \
+            --user admin  \
+            --password admin  \
+            --cmd 'get pods' 
 ```
 
-* List the pods
+### List the pods
+
 ```
-java -jar target/openshift-client-1.0-SNAPSHOT.jar --url https://192.168.64.25:8443 --namespace default --user admin --password admin --cmd 'get pods'   
+java -jar target/openshift-client-1.0-SNAPSHOT.jar  \
+            --url https://192.168.64.25:8443 \
+            --namespace default \
+            --user admin  \
+            --password admin  \
+            --cmd 'get pods' 
+               
 2017-03-23 18:29:48 INFO  AbstractCommand:93 - Username  : admin
 2017-03-23 18:29:48 INFO  AbstractCommand:93 - Namespace : default
 2017-03-23 18:29:48 INFO  AbstractCommand:93 - Master URL : https://192.168.64.25:8443/
@@ -48,9 +60,16 @@ java -jar target/openshift-client-1.0-SNAPSHOT.jar --url https://192.168.64.25:8
 2017-03-23 18:29:48 INFO  AbstractCommand:93 - Pod : router-1-x3vme, Status : Running, IP : 192.168.64.25
 
 ```
-* List the Services
+
+### List the Services
 ```
-java -jar target/openshift-client-1.0-SNAPSHOT.jar --url https://192.168.64.25:8443 --namespace default --user admin --password admin --cmd 'get services' 
+java -jar target/openshift-client-1.0-SNAPSHOT.jar  \
+            --url https://192.168.64.25:8443 \
+            --namespace default \
+            --user admin  \
+            --password admin  \
+            --cmd 'get services'
+             
 2017-03-23 18:29:29 INFO  AbstractCommand:93 - Username  : admin
 2017-03-23 18:29:29 INFO  AbstractCommand:93 - Namespace : default
 2017-03-23 18:29:29 INFO  AbstractCommand:93 - Master URL : https://192.168.64.25:8443/
