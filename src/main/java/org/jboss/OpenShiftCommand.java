@@ -80,10 +80,9 @@ public class OpenShiftCommand {
 					.build();
 		}
 
-		/*
-		KubernetesClient kubernetesClient = new DefaultKubernetesClient(config);
-		OpenShiftClient client = kubernetesClient.adapt(OpenShiftClient.class);
-        */
+		// The OpenShiftClient must be used in order to include the okhttp interceptro : OpenShiftOAuthInterceptor
+		// responsible to issue for each request the Authorization Bearer: token which is required to be correctly
+		// authenticated on OpenShift
 		OpenShiftClient client = new DefaultOpenShiftClient(config);
 
 		try {
