@@ -15,7 +15,6 @@
  */
 package org.jboss;
 
-import java.io.IOException;
 import java.util.List;
 
 import com.beust.jcommander.JCommander;
@@ -34,6 +33,7 @@ import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClientException;
 import io.fabric8.openshift.api.model.Project;
 import io.fabric8.openshift.api.model.ProjectRequest;
+import io.fabric8.openshift.client.DefaultOpenShiftClient;
 import io.fabric8.openshift.client.OpenShiftClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,8 +80,11 @@ public class OpenShiftCommand {
 					.build();
 		}
 
+		/*
 		KubernetesClient kubernetesClient = new DefaultKubernetesClient(config);
 		OpenShiftClient client = kubernetesClient.adapt(OpenShiftClient.class);
+        */
+		OpenShiftClient client = new DefaultOpenShiftClient(config);
 
 		try {
 			log("Username  : " + cmdArgs.user);
@@ -92,9 +95,9 @@ public class OpenShiftCommand {
 			// Let's create the project if it doesn't exist
 			ProjectRequest request = null;
 			try {
-				Project project = project = client.projects().withName(cmdArgs.namespace).get();
+				Project project  = client.projects().withName(cmdArgs.namespace).get();
 			} catch(KubernetesClientException kubex) {
-				log("ERROR : The project " + cmdArgs.namespace + " doesn't exists for the current context !!!");
+				log("Project doesn't exist. So it will be created !");
 				request = client.projectrequests().createNew()
 						.withNewMetadata()
 						.withName(cmdArgs.namespace)
