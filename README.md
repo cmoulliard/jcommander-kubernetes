@@ -69,6 +69,6 @@ java -agentlib:jdwp=transport=dt_socket,address=5005,server=y,suspend=y -jar tar
 
 ## TODO
 
-- Format List result as a [Table](https://www.ksmpartners.com/2013/08/nicely-formatted-tabular-output-in-java/) 
+- Format List result as a [Table](https://www.ksmpartners.com/2013/08/nicely-formatted-tabular-output-in-java/) or [Table Formater](https://github.com/iNamik/java_text_tables)
 
 
