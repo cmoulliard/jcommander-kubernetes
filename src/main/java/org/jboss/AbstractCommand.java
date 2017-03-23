@@ -37,6 +37,7 @@ import io.fabric8.openshift.api.model.RouteList;
 import io.fabric8.openshift.api.model.RouteSpec;
 import io.fabric8.openshift.client.DefaultOpenShiftClient;
 import io.fabric8.openshift.client.OpenShiftClient;
+import org.jboss.util.TableBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,24 +53,32 @@ public class AbstractCommand {
 	protected static void listPods(KubernetesClient client) {
 		PodList podList = client.pods().list();
 		List<Pod> pods = podList.getItems();
-		log("============ Pods ===========");
+		TableBuilder builder = new TableBuilder();
+		builder.addRow("Pods\n");
+		builder.addRow("NAME","STATUS","IP");
+		builder.addRow("====","======","==");
 		for (Pod pod : pods) {
-			log("Pod : " + pod.getMetadata().getName() + ", " + "Status : " + pod
-					.getStatus().getPhase() + ", " + "IP : " + pod.getStatus()
-					.getPodIP());
+			builder.addRow(pod.getMetadata().getName(),
+					pod.getStatus().getPhase(),
+					pod.getStatus().getPodIP());
 		}
+		log(builder.toString());
 	}
 
 	protected static void listServices(KubernetesClient client) {
 		ServiceList serviceList = client.services().list();
 		List<Service> services = serviceList.getItems();
-		log("============ Services ===========");
+		TableBuilder builder = new TableBuilder();
+		builder.addRow("Services\n");
+		builder.addRow("NAME","CLUSTER-IP","PORT");
+		builder.addRow("====","==========","====");
 		for (Service service : services) {
 			ServiceSpec serviceSpec = service.getSpec();
-			log("Service : " + service.getMetadata().getName() + ", " + "Cluster IP : "
-					+ serviceSpec.getClusterIP() + ", " + "Port if : " + serviceSpec
-					.getPorts().get(0).getName());
+			builder.addRow(service.getMetadata().getName(),
+					serviceSpec.getClusterIP(),
+					serviceSpec.getPorts().get(0).getName());
 		}
+		log(builder.toString());
 	}
 
 	protected static void listRoutes(KubernetesClient client) {
@@ -78,8 +87,7 @@ public class AbstractCommand {
 		log("============ Routes ===========");
 		for (Route route : routes) {
 			RouteSpec routeSpec = route.getSpec();
-			log("Route : " + route.getMetadata().getName() + ", "
-					+ "Status : " + route.getStatus());
+			log("Route : " + route.getMetadata().getName() + ", " + "Status : " + route.getStatus());
 		}
 	}
 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss;
+package org.jboss.test;
 
 import java.util.List;
 
@@ -34,6 +34,7 @@ import io.fabric8.openshift.api.model.Project;
 import io.fabric8.openshift.api.model.ProjectRequest;
 import io.fabric8.openshift.client.DefaultOpenShiftClient;
 import io.fabric8.openshift.client.OpenShiftClient;
+import org.jboss.AuthArgs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

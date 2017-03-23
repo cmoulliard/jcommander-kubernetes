@@ -1,4 +1,4 @@
-package org.jboss;
+package org.jboss.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;

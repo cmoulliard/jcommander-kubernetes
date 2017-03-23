@@ -50,13 +50,19 @@ java -jar target/openshift-client-1.0-SNAPSHOT.jar  \
             --password admin  \
             --cmd 'get pods' 
                
-2017-03-23 18:29:48 INFO  AbstractCommand:93 - Username  : admin
-2017-03-23 18:29:48 INFO  AbstractCommand:93 - Namespace : default
-2017-03-23 18:29:48 INFO  AbstractCommand:93 - Master URL : https://192.168.64.25:8443/
-2017-03-23 18:29:48 INFO  AbstractCommand:93 - ==========================
-2017-03-23 18:29:48 INFO  AbstractCommand:93 - ============ Pods ===========
-2017-03-23 18:29:48 INFO  AbstractCommand:93 - Pod : docker-registry-1-1sqio, Status : Running, IP : 172.17.0.2
-2017-03-23 18:29:48 INFO  AbstractCommand:93 - Pod : router-1-x3vme, Status : Running, IP : 192.168.64.25
+2017-03-23 19:11:56 INFO  AbstractCommand:111 - Username  : admin
+2017-03-23 19:11:56 INFO  AbstractCommand:111 - Namespace : secure
+2017-03-23 19:11:56 INFO  AbstractCommand:111 - Master URL : https://api.engint.openshift.com/
+2017-03-23 19:11:56 INFO  AbstractCommand:111 - ==========================
+2017-03-23 19:11:57 INFO  AbstractCommand:111 - Pods
+            
+NAME             STATUS    IP         
+====             ======    ==         
+eap-app-1-build  Succeeded 10.1.1.76  
+eap-app-1-deploy Failed    10.1.7.132 
+sso-1-deploy     Failed    10.1.4.186 
+tomcat-1-40who   Running   10.1.7.141 
+tomcat-1-build   Succeeded 10.1.7.140 
 
 ```
 
@@ -69,14 +75,19 @@ java -jar target/openshift-client-1.0-SNAPSHOT.jar  \
             --password admin  \
             --cmd 'get services'
              
-2017-03-23 18:29:29 INFO  AbstractCommand:93 - Username  : admin
-2017-03-23 18:29:29 INFO  AbstractCommand:93 - Namespace : default
-2017-03-23 18:29:29 INFO  AbstractCommand:93 - Master URL : https://192.168.64.25:8443/
-2017-03-23 18:29:29 INFO  AbstractCommand:93 - ==========================
-2017-03-23 18:29:30 INFO  AbstractCommand:93 - ============ Services ===========
-2017-03-23 18:29:30 INFO  AbstractCommand:93 - Service : docker-registry, Cluster IP : 172.30.241.217, Port if : 5000-tcp
-2017-03-23 18:29:30 INFO  AbstractCommand:93 - Service : kubernetes, Cluster IP : 172.30.0.1, Port if : https
-2017-03-23 18:29:30 INFO  AbstractCommand:93 - Service : router, Cluster IP : 172.30.49.159, Port if : 80-tcp
+2017-03-23 19:15:01 INFO  AbstractCommand:115 - Username  : admin
+2017-03-23 19:15:01 INFO  AbstractCommand:115 - Namespace : secure
+2017-03-23 19:15:01 INFO  AbstractCommand:115 - Master URL : https://api.engint.openshift.com/
+2017-03-23 19:15:01 INFO  AbstractCommand:115 - ==========================
+2017-03-23 19:15:02 INFO  AbstractCommand:115 - Services
+      
+NAME           CLUSTER-IP     PORT     
+====           ==========     ====     
+eap-app        172.30.159.138          
+secure-eap-app 172.30.251.145          
+secure-sso     172.30.142.101          
+sso            172.30.175.184          
+tomcat         172.30.55.220  8080-tcp 
 
 ```
 
