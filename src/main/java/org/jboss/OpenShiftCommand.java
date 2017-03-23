@@ -93,15 +93,14 @@ public class OpenShiftCommand {
 			ProjectRequest request = null;
 			try {
 				Project project = project = client.projects().withName(cmdArgs.namespace).get();
-				if (project == null) {
-					request = client.projectrequests().createNew()
-							.withNewMetadata()
-							.withName(cmdArgs.namespace)
-							.endMetadata()
-							.done();
-				}
 			} catch(KubernetesClientException kubex) {
-				kubex.printStackTrace();
+				log("ERROR : The project " + cmdArgs.namespace + " doesn't exists for the current context !!!");
+				request = client.projectrequests().createNew()
+						.withNewMetadata()
+						.withName(cmdArgs.namespace)
+						.endMetadata()
+						.done();
+				log("The project " + cmdArgs.namespace + " has been created !");
 			}
 
 			log("Created RC",
