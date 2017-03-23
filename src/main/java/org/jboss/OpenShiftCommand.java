@@ -15,10 +15,14 @@
  */
 package org.jboss;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
+import io.fabric8.kubernetes.api.model.ConfigMap;
+import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.api.model.PodList;
 import io.fabric8.kubernetes.api.model.ReplicationController;
@@ -62,20 +66,13 @@ public class OpenShiftCommand {
 		// Configure the Kubernetes client
 		Config config;
 		if (cmdArgs.token == null) {
-			config = new ConfigBuilder()
-					.withMasterUrl(cmdArgs.url)
-					.withTrustCerts(true)
-					.withUsername(cmdArgs.user)
-					.withPassword(cmdArgs.password)
-					.withNamespace(cmdArgs.namespace)
-					.build();
+			config = new ConfigBuilder().withMasterUrl(cmdArgs.url).withTrustCerts(true)
+					.withUsername(cmdArgs.user).withPassword(cmdArgs.password)
+					.withNamespace(cmdArgs.namespace).build();
 		}
 		else {
-			config = new ConfigBuilder()
-					.withMasterUrl(cmdArgs.url)
-					.withTrustCerts(true)
-					.withOauthToken(cmdArgs.token)
-					.withNamespace(cmdArgs.namespace)
+			config = new ConfigBuilder().withMasterUrl(cmdArgs.url).withTrustCerts(true)
+					.withOauthToken(cmdArgs.token).withNamespace(cmdArgs.namespace)
 					.build();
 		}
 
@@ -92,17 +89,17 @@ public class OpenShiftCommand {
 			log("==========================");
 
 			// Let's create the project if it doesn't exist
-			try {
-				Project project  = client.projects().withName(cmdArgs.namespace).get();
-			} catch(KubernetesClientException kubex) {
+
+			Project project = client.projects().withName(cmdArgs.namespace).get();
+			if (project == null) {
 				log("Project doesn't exist. So it will be created !");
-				request = client.projectrequests().createNew()
-						.withNewMetadata()
-						.withName(cmdArgs.namespace)
-						.endMetadata()
-						.done();
+				request = client.projectrequests().createNew().withNewMetadata()
+						.withName(cmdArgs.namespace).endMetadata().done();
 				log("The project " + cmdArgs.namespace + " has been created !");
 			}
+
+			// Create a ConfigMap
+			client.configMaps().inNamespace(cmdArgs.namespace).create(createConfigMap());
 
 			log("Created RC",
 					client.replicationControllers().inNamespace(cmdArgs.namespace)
@@ -124,8 +121,8 @@ public class OpenShiftCommand {
 					.withName("nginx-controller").delete();
 			log("Deleted RC");
 
-
-		} catch(KubernetesClientException e) {
+		}
+		catch (KubernetesClientException e) {
 			e.printStackTrace();
 			logger.error(e.getMessage(), e);
 
@@ -135,7 +132,8 @@ public class OpenShiftCommand {
 					logger.error(t.getMessage(), t);
 				}
 			}
-		} finally {
+		}
+		finally {
 			if (request != null) {
 				client.projects().withName(cmdArgs.namespace).delete();
 				log("Project " + cmdArgs.namespace + " has been deleted.");
@@ -175,6 +173,18 @@ public class OpenShiftCommand {
 				.addNewContainer().withName("nginx").withImage("nginx").addNewPort()
 				.withContainerPort(80).endPort().endContainer().endSpec().endTemplate()
 				.endSpec().build();
+	}
+
+	private static ConfigMap createConfigMap() {
+		ConfigMap configMap = new ConfigMap();
+		Map<String, String> data = new HashMap<String, String>();
+		data.put("greeting", "Charles");
+		data.put("message", "Bonjour");
+		configMap.setData(data);
+		ObjectMeta metaData = new ObjectMeta();
+		metaData.setName("greetings");
+		configMap.setMetadata(metaData);
+		return configMap;
 	}
 
 	private static void log(String action, Object obj) {
