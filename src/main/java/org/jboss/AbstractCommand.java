@@ -49,8 +49,9 @@ public class AbstractCommand {
 	protected final static String PODS = "pods";
 	protected final static String SERVICES = "services";
 	protected final static String ROUTES = "routes";
+	protected final static String ROUTE = "route";
 
-	protected static void listPods(KubernetesClient client) {
+	protected static void listPods(OpenShiftClient client) {
 		PodList podList = client.pods().list();
 		List<Pod> pods = podList.getItems();
 		TableBuilder builder = new TableBuilder();
@@ -94,6 +95,24 @@ public class AbstractCommand {
 					routeSpec.getHost(),
 					routeSpec.getTo().getName(),
 					routeSpec.getPort().getTargetPort().getStrVal());
+		}
+		log(builder.toString());
+	}
+
+	protected static void getRoute(OpenShiftClient client, String content) {
+		RouteList routeList = client.routes().list();
+		List<Route> routes = routeList.getItems();
+		TableBuilder builder = new TableBuilder();
+		builder.addRow("Route\n");
+		builder.addRow("NAME","HOST/PORT","SERVICES","PORT");
+		builder.addRow("====","=========","========","====");
+		for (Route route : routes) {
+			if(route.getMetadata().getName().equals(content)) {
+				RouteSpec routeSpec = route.getSpec();
+				builder.addRow(route.getMetadata().getName(), routeSpec.getHost(),
+						routeSpec.getTo().getName(), routeSpec.getPort().getTargetPort().getStrVal());
+			}
+			break;
 		}
 		log(builder.toString());
 	}

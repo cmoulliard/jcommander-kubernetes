@@ -97,6 +97,13 @@ public class OpenShiftCommand extends AbstractCommand {
 				listRoutes(client);
 			}
 
+			if((cmdParams[0].toLowerCase().equals(GET)) && (cmdParams[1].toLowerCase().equals(ROUTE))) {
+				if(cmdParams[2].toLowerCase() != null) {
+					getRoute(client,cmdParams[2].toLowerCase());
+				}
+				listRoutes(client);
+			}
+
 		}
 		catch (Exception e) {
 			e.printStackTrace();
