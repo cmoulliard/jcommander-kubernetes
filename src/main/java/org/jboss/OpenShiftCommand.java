@@ -32,6 +32,8 @@ import io.fabric8.kubernetes.client.ConfigBuilder;
 import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClientException;
+import io.fabric8.openshift.api.model.Project;
+import io.fabric8.openshift.api.model.ProjectRequest;
 import io.fabric8.openshift.client.OpenShiftClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,9 +63,21 @@ public class OpenShiftCommand {
 		// Configure the Kubernetes client
 		Config config;
 		if (cmdArgs.token == null) {
-			config = new ConfigBuilder().withMasterUrl(cmdArgs.url).withTrustCerts(true).withUsername(cmdArgs.user).withPassword(cmdArgs.password).withNamespace(cmdArgs.namespace).build();
-		} else {
-			config = new ConfigBuilder().withMasterUrl(cmdArgs.url).withTrustCerts(true).withOauthToken(cmdArgs.token).withNamespace(cmdArgs.namespace).build();
+			config = new ConfigBuilder()
+					.withMasterUrl(cmdArgs.url)
+					.withTrustCerts(true)
+					.withUsername(cmdArgs.user)
+					.withPassword(cmdArgs.password)
+					.withNamespace(cmdArgs.namespace)
+					.build();
+		}
+		else {
+			config = new ConfigBuilder()
+					.withMasterUrl(cmdArgs.url)
+					.withTrustCerts(true)
+					.withOauthToken(cmdArgs.token)
+					.withNamespace(cmdArgs.namespace)
+					.build();
 		}
 
 		KubernetesClient kubernetesClient = new DefaultKubernetesClient(config);
@@ -74,6 +88,21 @@ public class OpenShiftCommand {
 			log("Namespace : " + cmdArgs.namespace);
 			log("Master URL : " + config.getMasterUrl());
 			log("==========================");
+
+			// Let's create the project if it doesn't exist
+			ProjectRequest request = null;
+			try {
+				Project project = project = client.projects().withName(cmdArgs.namespace).get();
+				if (project == null) {
+					request = client.projectrequests().createNew()
+							.withNewMetadata()
+							.withName(cmdArgs.namespace)
+							.endMetadata()
+							.done();
+				}
+			} catch(KubernetesClientException kubex) {
+				kubex.printStackTrace();
+			}
 
 			log("Created RC",
 					client.replicationControllers().inNamespace(cmdArgs.namespace)
