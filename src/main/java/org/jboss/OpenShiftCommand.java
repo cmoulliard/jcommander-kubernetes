@@ -44,7 +44,7 @@ public class OpenShiftCommand {
 
 	private CommandArgs cmdArgs;
 
-	public static void main(String[] args) throws InterruptedException, IOException {
+	public static void main(String[] args) throws Exception {
 
 		CommandArgs cmdArgs = new CommandArgs();
 		JCommander cmdParser = new JCommander(cmdArgs);
