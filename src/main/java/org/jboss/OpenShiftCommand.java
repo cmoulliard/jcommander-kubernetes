@@ -28,7 +28,6 @@ import io.fabric8.kubernetes.api.model.ServiceList;
 import io.fabric8.kubernetes.api.model.ServiceSpec;
 import io.fabric8.kubernetes.client.Config;
 import io.fabric8.kubernetes.client.ConfigBuilder;
-import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClientException;
 import io.fabric8.openshift.api.model.Project;
@@ -80,10 +79,11 @@ public class OpenShiftCommand {
 					.build();
 		}
 
-		// The OpenShiftClient must be used in order to include the okhttp interceptro : OpenShiftOAuthInterceptor
+		// The OpenShiftClient must be used in order to include the okhttp interceptor : OpenShiftOAuthInterceptor
 		// responsible to issue for each request the Authorization Bearer: token which is required to be correctly
 		// authenticated on OpenShift
 		OpenShiftClient client = new DefaultOpenShiftClient(config);
+		ProjectRequest request = null;
 
 		try {
 			log("Username  : " + cmdArgs.user);
@@ -92,7 +92,6 @@ public class OpenShiftCommand {
 			log("==========================");
 
 			// Let's create the project if it doesn't exist
-			ProjectRequest request = null;
 			try {
 				Project project  = client.projects().withName(cmdArgs.namespace).get();
 			} catch(KubernetesClientException kubex) {
@@ -125,8 +124,8 @@ public class OpenShiftCommand {
 					.withName("nginx-controller").delete();
 			log("Deleted RC");
 
-		}
-		catch (KubernetesClientException e) {
+
+		} catch(KubernetesClientException e) {
 			e.printStackTrace();
 			logger.error(e.getMessage(), e);
 
@@ -135,6 +134,11 @@ public class OpenShiftCommand {
 				for (Throwable t : suppressed) {
 					logger.error(t.getMessage(), t);
 				}
+			}
+		} finally {
+			if (request != null) {
+				client.projects().withName(cmdArgs.namespace).delete();
+				log("Project " + cmdArgs.namespace + " has been deleted.");
 			}
 		}
 	}
