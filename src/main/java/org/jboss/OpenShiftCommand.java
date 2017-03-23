@@ -99,7 +99,13 @@ public class OpenShiftCommand {
 			}
 
 			// Create a ConfigMap
-			client.configMaps().inNamespace(cmdArgs.namespace).create(createConfigMap());
+			client.configMaps().inNamespace(cmdArgs.namespace).createNew()
+					.withNewMetadata()
+					  .withName("greetings")
+					.endMetadata()
+					.addToData("greeting", "Charles")
+					.addToData("message", "Bonjour")
+					.done();
 
 			log("Created RC",
 					client.replicationControllers().inNamespace(cmdArgs.namespace)
@@ -108,10 +114,15 @@ public class OpenShiftCommand {
 			// Get the RC by label
 			log("Get RC by label",
 					client.replicationControllers().withLabel("server", "nginx").list());
-			// Get the RC without label
-			log("Get RC without label",
-					client.replicationControllers().withoutLabel("server", "apache")
-							.list());
+
+			log("Created service",
+					client.services().inNamespace(cmdArgs.namespace).createNew()
+							.withNewMetadata().withName("testservice").endMetadata()
+							.withNewSpec()
+							.addNewPort().withPort(80).withNewTargetPort().withIntVal(80).endTargetPort().endPort()
+							.endSpec()
+							.done());
+			log("============ Pods ===========");
 
 			Thread.sleep(5000);
 			listPods(client);
@@ -165,26 +176,19 @@ public class OpenShiftCommand {
 	}
 
 	private static ReplicationController createReplicationController() {
-		// Create an RC
-		return new ReplicationControllerBuilder().withNewMetadata()
-				.withName("nginx-controller").addToLabels("server", "nginx").endMetadata()
-				.withNewSpec().withReplicas(2).withNewTemplate().withNewMetadata()
-				.addToLabels("server", "nginx").endMetadata().withNewSpec()
+		// Create a RC
+		return new ReplicationControllerBuilder()
+				.withNewMetadata()
+				.withName("nginx-controller").addToLabels("server", "nginx")
+				.endMetadata()
+				.withNewSpec()
+				.withReplicas(2).withNewTemplate()
+				.withNewMetadata()
+				.addToLabels("server", "nginx")
+				.endMetadata().withNewSpec()
 				.addNewContainer().withName("nginx").withImage("nginx").addNewPort()
 				.withContainerPort(80).endPort().endContainer().endSpec().endTemplate()
 				.endSpec().build();
-	}
-
-	private static ConfigMap createConfigMap() {
-		ConfigMap configMap = new ConfigMap();
-		Map<String, String> data = new HashMap<String, String>();
-		data.put("greeting", "Charles");
-		data.put("message", "Bonjour");
-		configMap.setData(data);
-		ObjectMeta metaData = new ObjectMeta();
-		metaData.setName("greetings");
-		configMap.setMetadata(metaData);
-		return configMap;
 	}
 
 	private static void log(String action, Object obj) {
