@@ -31,3 +31,14 @@ mvn clean compile exec:java -Dexec.args="--url https://192.168.64.25:8443 --name
 mvn clean compile exec:java -Dexec.args="--url https://192.168.64.25:8443 --namespace test --token DexGhitaeWIkH_DTlJMCHFWwRRkUPsCE0QsSuU9U8n8"
 ```
 
+## Using the command line tool
+```
+java -jar target/openshift-client-1.0-SNAPSHOT.jar --url https://192.168.64.25:8443 --namespace test --user test --password test --cmd 'get pods' 
+```
+
+* Debug
+```
+java -agentlib:jdwp=transport=dt_socket,address=5005,server=y,suspend=y -jar target/openshift-client-1.0-SNAPSHOT.jar --url https://192.168.64.25:8443 --namespace test --user test --password test --cmd 'get pods'
+```
+
+

@@ -5,7 +5,7 @@ import com.beust.jcommander.Parameter;
 /**
  * @author <a href="mailto:cmoullia@redhat.com">Charles Moulliard</a>
  */
-public class CommandArgs {
+public class AuthArgs {
 	@Parameter(names = "--url", description = "The url of the kubernetes server", required = true)
 	public String url;
 	@Parameter(names = "--namespace", description = "The namespace or project", required = false)

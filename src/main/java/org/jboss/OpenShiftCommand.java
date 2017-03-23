@@ -15,14 +15,10 @@
  */
 package org.jboss;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
-import io.fabric8.kubernetes.api.model.ConfigMap;
-import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.api.model.PodList;
 import io.fabric8.kubernetes.api.model.ReplicationController;
@@ -41,15 +37,13 @@ import io.fabric8.openshift.client.OpenShiftClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class OpenShiftCommand {
+public class OpenShiftCommand extends AbstractCommand {
 
 	private static final Logger logger = LoggerFactory.getLogger(OpenShiftCommand.class);
 
-	private CommandArgs cmdArgs;
-
 	public static void main(String[] args) throws Exception {
 
-		CommandArgs cmdArgs = new CommandArgs();
+		OpenShiftArgs cmdArgs = new OpenShiftArgs();
 		JCommander cmdParser = new JCommander(cmdArgs);
 		try {
 			cmdParser.setProgramName(OpenShiftCommand.class.getName());
@@ -93,44 +87,29 @@ public class OpenShiftCommand {
 			Project project = client.projects().withName(cmdArgs.namespace).get();
 			if (project == null) {
 				log("Project doesn't exist. So it will be created !");
-				request = client.projectrequests().createNew().withNewMetadata()
-						.withName(cmdArgs.namespace).endMetadata().done();
+				request = client.projectrequests()
+						        .createNew()
+						        .withNewMetadata()
+						          .withName(cmdArgs.namespace)
+						        .endMetadata()
+						        .done();
 				log("The project " + cmdArgs.namespace + " has been created !");
 			}
 
-			// Create a ConfigMap
-			client.configMaps().inNamespace(cmdArgs.namespace).createNew()
-					.withNewMetadata()
-					  .withName("greetings")
-					.endMetadata()
-					.addToData("greeting", "Charles")
-					.addToData("message", "Bonjour")
-					.done();
+			// Extract the command
+			String[] cmdParams = cmdArgs.cmd.split(" ");
 
-			log("Created RC",
-					client.replicationControllers().inNamespace(cmdArgs.namespace)
-							.create(createReplicationController()));
+			if((cmdParams[0].toLowerCase().equals(GET)) && (cmdParams[1].toLowerCase().equals(PODS))) {
+				listPods(client);
+			}
 
-			// Get the RC by label
-			log("Get RC by label",
-					client.replicationControllers().withLabel("server", "nginx").list());
+			if((cmdParams[0].toLowerCase().equals(GET)) && (cmdParams[1].toLowerCase().equals(SERVICES))) {
+				listServices(client);
+			}
 
-			log("Created service",
-					client.services().inNamespace(cmdArgs.namespace).createNew()
-							.withNewMetadata().withName("testservice").endMetadata()
-							.withNewSpec()
-							.addNewPort().withPort(80).withNewTargetPort().withIntVal(80).endTargetPort().endPort()
-							.endSpec()
-							.done());
-			log("============ Pods ===========");
-
-			Thread.sleep(5000);
-			listPods(client);
-			listServices(client);
-
-			client.replicationControllers().inNamespace(cmdArgs.namespace)
-					.withName("nginx-controller").delete();
-			log("Deleted RC");
+			if((cmdParams[0].toLowerCase().equals(GET)) && (cmdParams[1].toLowerCase().equals(ROUTES))) {
+				listServices(client);
+			}
 
 		}
 		catch (KubernetesClientException e) {
@@ -150,53 +129,6 @@ public class OpenShiftCommand {
 				log("Project " + cmdArgs.namespace + " has been deleted.");
 			}
 		}
-	}
-
-	private static void listPods(KubernetesClient client) {
-		PodList podList = client.pods().list();
-		List<Pod> pods = podList.getItems();
-		log("============ Pods ===========");
-		for (Pod pod : pods) {
-			log("Pod : " + pod.getMetadata().getName() + ", " + "Status : " + pod
-					.getStatus().getPhase() + ", " + "IP : " + pod.getStatus()
-					.getPodIP());
-		}
-	}
-
-	private static void listServices(KubernetesClient client) {
-		ServiceList serviceList = client.services().list();
-		List<Service> services = serviceList.getItems();
-		log("============ Services ===========");
-		for (Service service : services) {
-			ServiceSpec serviceSpec = service.getSpec();
-			log("Service : " + service.getMetadata().getName() + ", " + "Cluster IP : "
-					+ serviceSpec.getClusterIP() + ", " + "Port if : " + serviceSpec
-					.getPorts().get(0).getName());
-		}
-	}
-
-	private static ReplicationController createReplicationController() {
-		// Create a RC
-		return new ReplicationControllerBuilder()
-				.withNewMetadata()
-				.withName("nginx-controller").addToLabels("server", "nginx")
-				.endMetadata()
-				.withNewSpec()
-				.withReplicas(2).withNewTemplate()
-				.withNewMetadata()
-				.addToLabels("server", "nginx")
-				.endMetadata().withNewSpec()
-				.addNewContainer().withName("nginx").withImage("nginx").addNewPort()
-				.withContainerPort(80).endPort().endContainer().endSpec().endTemplate()
-				.endSpec().build();
-	}
-
-	private static void log(String action, Object obj) {
-		logger.info("{}: {}", action, obj);
-	}
-
-	private static void log(String action) {
-		logger.info(action);
 	}
 
 }
