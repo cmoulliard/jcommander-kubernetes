@@ -17,6 +17,9 @@ package org.jboss;
 
 import java.util.List;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.api.model.PodList;
 import io.fabric8.kubernetes.api.model.ReplicationController;
@@ -28,6 +31,7 @@ import io.fabric8.openshift.api.model.Route;
 import io.fabric8.openshift.api.model.RouteList;
 import io.fabric8.openshift.api.model.RouteSpec;
 import io.fabric8.openshift.client.OpenShiftClient;
+import org.jboss.model.Config;
 import org.jboss.util.TableBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,21 +62,51 @@ public class AbstractCommand {
 		log(builder.toString());
 	}
 
-	protected static void getPod(OpenShiftClient client, String content) {
+	protected static void getPod(OpenShiftClient client, String content)
+			throws JsonProcessingException {
+		getPod(client,content,"");
+	}
+
+	protected static void getPod(OpenShiftClient client, String content, String format)
+			throws JsonProcessingException {
 		PodList podList = client.pods().list();
 		List<Pod> pods = podList.getItems();
-		TableBuilder builder = new TableBuilder();
-		builder.addRow("Pod\n");
-		builder.addRow("NAME", "STATUS", "IP");
-		builder.addRow("====", "======", "==");
+		Pod podChoosen = null;
 		for (Pod pod : pods) {
 			if(pod.getMetadata().getName().equals(content)) {
-				builder.addRow(pod.getMetadata().getName(), pod.getStatus().getPhase(),
-						pod.getStatus().getPodIP());
+				podChoosen = pod;
 			}
+			logFormat(format,podChoosen);
 			break;
 		}
-		log(builder.toString());
+	}
+
+	private static void logFormat(String format, Object object)
+			throws JsonProcessingException {
+		switch (format) {
+		case "yaml":
+			ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+			log(mapper.writeValueAsString(object));
+			break;
+		case "json":
+			mapper = new ObjectMapper();
+			log(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(object));
+			break;
+		default:
+			Pod pod = null;
+			if(Pod.class.isInstance(object)) {
+				pod = (Pod)object;
+			}
+			TableBuilder builder = new TableBuilder();
+			builder.addRow("Pod\n");
+			builder.addRow("NAME", "STATUS", "IP");
+			builder.addRow("====", "======", "==");
+			builder.addRow(pod.getMetadata().getName(),
+					pod.getStatus().getPhase(),
+					pod.getStatus().getPodIP());
+			log(builder.toString());
+			break;
+		}
 	}
 
 	protected static void listServices(OpenShiftClient client) {

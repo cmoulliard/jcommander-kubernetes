@@ -15,7 +15,10 @@
  */
 package org.jboss;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
@@ -83,30 +86,70 @@ public class OpenShiftCommand extends AbstractCommand {
 			log("==========================");
 
 			// Extract the command
-			String[] cmdParams = cmdArgs.cmd.split(" ");
+			/* Using @Subparameter - doesn't work
+			String operation = cmdArgs.cmdParameters.operation;
+			String type = cmdArgs.cmdParameters.type;
+			String item = cmdArgs.cmdParameters.item;
+			String output = cmdArgs.cmdParameters.output;
 
-			if((cmdParams[0].toLowerCase().equals(GET)) && (cmdParams[1].toLowerCase().equals(PODS))) {
+						if((operation.toLowerCase().equals(GET)) && (type.toLowerCase().equals(PODS))) {
 				listPods(client);
 			}
 
-			if((cmdParams[0].toLowerCase().equals(GET)) && (cmdParams[1].toLowerCase().equals(POD)) && (cmdParams[2].toLowerCase() != null)) {
-				getPod(client,cmdParams[2].toLowerCase());
+			if((operation.toLowerCase().equals(GET)) && (type.toLowerCase().equals(POD)) && (item.toLowerCase() != null)) {
+				if(output == null) {
+					getPod(client, item.toLowerCase());
+				} else {
+					getPod(client, item.toLowerCase(),output);
+				}
 			}
 
-			if((cmdParams[0].toLowerCase().equals(GET)) && (cmdParams[1].toLowerCase().equals(SERVICES))) {
+			if((operation.toLowerCase().equals(GET)) && (type.toLowerCase().equals(SERVICES))) {
 				listServices(client);
 			}
 
-			if((cmdParams[0].toLowerCase().equals(GET)) && (cmdParams[1].toLowerCase().equals(SERVICE)) && (cmdParams[2].toLowerCase() != null)) {
-				getService(client,cmdParams[2].toLowerCase());
+			if((operation.toLowerCase().equals(GET)) && (type.toLowerCase().equals(SERVICE)) && (item.toLowerCase() != null)) {
+				getService(client,item.toLowerCase());
 			}
 
-			if((cmdParams[0].toLowerCase().equals(GET)) && (cmdParams[1].toLowerCase().equals(ROUTES))) {
+			if((operation.toLowerCase().equals(GET)) && (type.toLowerCase().equals(ROUTES))) {
 				listRoutes(client);
 			}
 
-			if((cmdParams[0].toLowerCase().equals(GET)) && (cmdParams[1].toLowerCase().equals(ROUTE)) && (cmdParams[2].toLowerCase() != null)) {
-					getRoute(client,cmdParams[2].toLowerCase());
+			if((operation.toLowerCase().equals(GET)) && (type.toLowerCase().equals(ROUTE)) && (item.toLowerCase() != null)) {
+					getRoute(client,item.toLowerCase());
+			}
+			*/
+
+			//String [] cmdParams = cmdArgs.cmd.split(" ");
+
+			List<String> cmdParamsList = cmdArgs.cmdParameters;
+			if((cmdParamsList.get(0).toLowerCase().equals(GET)) && (cmdParamsList.get(1).toLowerCase().equals(PODS))) {
+				listPods(client);
+			}
+
+			if((cmdParamsList.get(0).toLowerCase().equals(GET)) && (cmdParamsList.get(1).toLowerCase().equals(POD)) && (cmdParamsList.get(2).toLowerCase() != null)) {
+				if(cmdParamsList.size() == 3) {
+					getPod(client, cmdParamsList.get(2).toLowerCase());
+				} else {
+					getPod(client, cmdParamsList.get(2).toLowerCase(),cmdParamsList.get(4));
+				}
+			}
+
+			if((cmdParamsList.get(0).toLowerCase().equals(GET)) && (cmdParamsList.get(1).toLowerCase().equals(SERVICES))) {
+				listServices(client);
+			}
+
+			if((cmdParamsList.get(0).toLowerCase().equals(GET)) && (cmdParamsList.get(1).toLowerCase().equals(SERVICE)) && (cmdParamsList.get(2).toLowerCase() != null)) {
+				getService(client,cmdParamsList.get(3).toLowerCase());
+			}
+
+			if((cmdParamsList.get(0).toLowerCase().equals(GET)) && (cmdParamsList.get(1).toLowerCase().equals(ROUTES))) {
+				listRoutes(client);
+			}
+
+			if((cmdParamsList.get(0).toLowerCase().equals(GET)) && (cmdParamsList.get(1).toLowerCase().equals(ROUTE)) && (cmdParamsList.get(2).toLowerCase() != null)) {
+					getRoute(client,cmdParamsList.get(3).toLowerCase());
 			}
 
 		}
