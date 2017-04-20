@@ -45,6 +45,7 @@ public class AbstractCommand {
 	private static final Logger logger = LoggerFactory.getLogger(AbstractCommand.class);
 
 	protected final static String GET = "get";
+	protected final static String EDIT = "edit";
 	protected final static String PODS = "pods";
 	protected final static String POD = "pod";
 	protected final static String SERVICES = "services";
@@ -113,10 +114,16 @@ public class AbstractCommand {
 		for (RoleBinding roleBinding : roleBindings) {
 			if(roleBinding.getMetadata().getName().equals(content)) {
 				roleBindingChoosen = roleBinding;
+				logFormat(format,roleBindingChoosen);
+				break;
 			}
-			logFormat(format,roleBindingChoosen);
-			break;
 		}
+	}
+
+	protected static void editRoleBinding(OpenShiftClient client, String name, String... roles) {
+		client.roleBindings().withName(name).edit()
+				.addToUserNames(roles)
+				.done();
 	}
 
 	protected static void listServices(OpenShiftClient client) {
@@ -147,8 +154,8 @@ public class AbstractCommand {
 				builder.addRow(service.getMetadata().getName(),
 						serviceSpec.getClusterIP(),
 						serviceSpec.getPorts().get(0).getName());
+				break;
 			}
-			break;
 		}
 		log(builder.toString());
 	}
@@ -182,8 +189,8 @@ public class AbstractCommand {
 				builder.addRow(route.getMetadata().getName(), routeSpec.getHost(),
 						routeSpec.getTo().getName(),
 						routeSpec.getPort().getTargetPort().getStrVal());
+				break;
 			}
-			break;
 		}
 		log(builder.toString());
 	}
