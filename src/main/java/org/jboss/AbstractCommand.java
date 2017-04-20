@@ -28,6 +28,8 @@ import io.fabric8.kubernetes.api.model.Service;
 import io.fabric8.kubernetes.api.model.ServiceList;
 import io.fabric8.kubernetes.api.model.ServiceSpec;
 import io.fabric8.openshift.api.model.Role;
+import io.fabric8.openshift.api.model.RoleBinding;
+import io.fabric8.openshift.api.model.RoleBindingList;
 import io.fabric8.openshift.api.model.RoleList;
 import io.fabric8.openshift.api.model.Route;
 import io.fabric8.openshift.api.model.RouteList;
@@ -49,8 +51,8 @@ public class AbstractCommand {
 	protected final static String SERVICE = "service";
 	protected final static String ROUTES = "routes";
 	protected final static String ROUTE = "route";
-	protected final static String ROLES = "roles";
-	protected final static String ROLE = "role";
+	protected final static String ROLEBINDINGS = "rolebindings";
+	protected final static String ROLEBINDING = "rolebinding";
 
 	protected static void listPods(OpenShiftClient client) {
 		PodList podList = client.pods().list();
@@ -79,23 +81,42 @@ public class AbstractCommand {
 		for (Pod pod : pods) {
 			if(pod.getMetadata().getName().equals(content)) {
 				podChoosen = pod;
+				logFormat(format,podChoosen);
+				break;
 			}
-			logFormat(format,podChoosen);
-			break;
 		}
 	}
 
-	protected static void listRoles(OpenShiftClient client) {
-		RoleList roleList = client.roles().list();
-		List<Role> roles = roleList.getItems();
+	protected static void listRoleBindings(OpenShiftClient client) {
+		RoleBindingList roleBindingList = client.roleBindings().list();
+		List<RoleBinding> roleBindings = roleBindingList.getItems();
 		TableBuilder builder = new TableBuilder();
-		builder.addRow("Roles\n");
+		builder.addRow("Role Bindings\n");
 		builder.addRow("NAME", "STATUS", "IP");
 		builder.addRow("====", "======", "==");
-		for (Role role : roles) {
-			builder.addRow(role.getMetadata().getName());
+		for (RoleBinding roleBinding : roleBindings) {
+			builder.addRow(roleBinding.getMetadata().getName());
 		}
 		log(builder.toString());
+	}
+
+	protected static void getRoleBinding(OpenShiftClient client, String content)
+			throws JsonProcessingException {
+		getRoleBinding(client,content,"");
+	}
+
+	protected static void getRoleBinding(OpenShiftClient client, String content, String format)
+			throws JsonProcessingException {
+		RoleBindingList roleBindingList = client.roleBindings().list();
+		List<RoleBinding> roleBindings = roleBindingList.getItems();
+		RoleBinding roleBindingChoosen = null;
+		for (RoleBinding roleBinding : roleBindings) {
+			if(roleBinding.getMetadata().getName().equals(content)) {
+				roleBindingChoosen = roleBinding;
+			}
+			logFormat(format,roleBindingChoosen);
+			break;
+		}
 	}
 
 	protected static void listServices(OpenShiftClient client) {

@@ -124,6 +124,14 @@ public class OpenShiftCommand extends AbstractCommand {
 			//String [] cmdParams = cmdArgs.cmd.split(" ");
 
 			List<String> cmdParamsList = cmdArgs.cmdParameters;
+
+			if((cmdParamsList.get(0).toLowerCase().equals(GET)) && (cmdParamsList.get(1).toLowerCase().equals(ROLEBINDINGS))) {
+				listRoleBindings(client);
+			}
+			if((cmdParamsList.get(0).toLowerCase().equals(GET)) && (cmdParamsList.get(1).toLowerCase().equals(ROLEBINDING)) && (cmdParamsList.get(2).toLowerCase() != null)) {
+				listRoleBindings(client);
+			}
+
 			if((cmdParamsList.get(0).toLowerCase().equals(GET)) && (cmdParamsList.get(1).toLowerCase().equals(PODS))) {
 				listPods(client);
 			}
@@ -132,7 +140,7 @@ public class OpenShiftCommand extends AbstractCommand {
 				if(cmdParamsList.size() == 3) {
 					getPod(client, cmdParamsList.get(2).toLowerCase());
 				} else {
-					getPod(client, cmdParamsList.get(2).toLowerCase(),cmdParamsList.get(4));
+					getPod(client, cmdParamsList.get(2).toLowerCase(),cmdParamsList.get(3));
 				}
 			}
 
