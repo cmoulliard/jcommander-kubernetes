@@ -38,7 +38,7 @@ java -jar target/openshift-client-1.0-SNAPSHOT.jar  \
             --namespace default \
             --user admin  \
             --password admin  \
-            --cmd 'get pods' 
+            --cmd get pods
 ```
 
 ### List the pods
@@ -48,7 +48,7 @@ java -jar target/openshift-client-1.0-SNAPSHOT.jar  \
             --namespace default \
             --user admin  \
             --password admin  \
-            --cmd 'get pods' 
+            --cmd get pods 
                
 2017-03-23 19:11:56 INFO  AbstractCommand:111 - Username  : admin
 2017-03-23 19:11:56 INFO  AbstractCommand:111 - Namespace : secure
@@ -73,7 +73,7 @@ java -jar target/openshift-client-1.0-SNAPSHOT.jar  \
             --namespace default \
             --user admin  \
             --password admin  \
-            --cmd 'get services'
+            --cmd get services
              
 2017-03-23 19:15:01 INFO  AbstractCommand:115 - Username  : admin
 2017-03-23 19:15:01 INFO  AbstractCommand:115 - Namespace : secure
@@ -98,7 +98,7 @@ java -jar target/openshift-client-1.0-SNAPSHOT.jar  \
             --namespace default \
             --user admin  \
             --password admin  \
-            --cmd 'get routes'
+            --cmd get routes
             
 2017-03-23 19:38:44 INFO  AbstractCommand:122 - Username  : admin
 2017-03-23 19:38:44 INFO  AbstractCommand:122 - Namespace : myproject
@@ -117,7 +117,7 @@ java -jar target/openshift-client-1.0-SNAPSHOT.jar  \
 >             --url https://api.engint.openshift.com \
 >             --namespace secure \
 >             --token Xral1af_SRe01FYjZtx66wT6sGMsMQjg1oEg7anlW0E \
->             --cmd 'get pods'
+>             --cmd get pods
 2017-03-23 18:55:25 INFO  AbstractCommand:93 - Username  : admin
 2017-03-23 18:55:26 INFO  AbstractCommand:93 - Namespace : secure
 2017-03-23 18:55:26 INFO  AbstractCommand:93 - Master URL : https://api.engint.openshift.com/

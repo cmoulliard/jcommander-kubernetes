@@ -27,6 +27,8 @@ import io.fabric8.kubernetes.api.model.ReplicationControllerBuilder;
 import io.fabric8.kubernetes.api.model.Service;
 import io.fabric8.kubernetes.api.model.ServiceList;
 import io.fabric8.kubernetes.api.model.ServiceSpec;
+import io.fabric8.openshift.api.model.Role;
+import io.fabric8.openshift.api.model.RoleList;
 import io.fabric8.openshift.api.model.Route;
 import io.fabric8.openshift.api.model.RouteList;
 import io.fabric8.openshift.api.model.RouteSpec;
@@ -47,6 +49,8 @@ public class AbstractCommand {
 	protected final static String SERVICE = "service";
 	protected final static String ROUTES = "routes";
 	protected final static String ROUTE = "route";
+	protected final static String ROLES = "roles";
+	protected final static String ROLE = "role";
 
 	protected static void listPods(OpenShiftClient client) {
 		PodList podList = client.pods().list();
@@ -81,32 +85,17 @@ public class AbstractCommand {
 		}
 	}
 
-	private static void logFormat(String format, Object object)
-			throws JsonProcessingException {
-		switch (format) {
-		case "yaml":
-			ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-			log(mapper.writeValueAsString(object));
-			break;
-		case "json":
-			mapper = new ObjectMapper();
-			log(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(object));
-			break;
-		default:
-			Pod pod = null;
-			if(Pod.class.isInstance(object)) {
-				pod = (Pod)object;
-			}
-			TableBuilder builder = new TableBuilder();
-			builder.addRow("Pod\n");
-			builder.addRow("NAME", "STATUS", "IP");
-			builder.addRow("====", "======", "==");
-			builder.addRow(pod.getMetadata().getName(),
-					pod.getStatus().getPhase(),
-					pod.getStatus().getPodIP());
-			log(builder.toString());
-			break;
+	protected static void listRoles(OpenShiftClient client) {
+		RoleList roleList = client.roles().list();
+		List<Role> roles = roleList.getItems();
+		TableBuilder builder = new TableBuilder();
+		builder.addRow("Roles\n");
+		builder.addRow("NAME", "STATUS", "IP");
+		builder.addRow("====", "======", "==");
+		for (Role role : roles) {
+			builder.addRow(role.getMetadata().getName());
 		}
+		log(builder.toString());
 	}
 
 	protected static void listServices(OpenShiftClient client) {
@@ -154,7 +143,7 @@ public class AbstractCommand {
 			RouteSpec routeSpec = route.getSpec();
 			builder.addRow(route.getMetadata().getName(), routeSpec.getHost(),
 					routeSpec.getTo().getName(),
-					routeSpec.getPort().getTargetPort().getStrVal());
+					(routeSpec.getPort() != null) ? routeSpec.getPort().getTargetPort().getStrVal() : "");
 		}
 		log(builder.toString());
 	}
@@ -195,6 +184,34 @@ public class AbstractCommand {
 
 	protected static void log(String action) {
 		logger.info(action);
+	}
+
+	private static void logFormat(String format, Object object)
+			throws JsonProcessingException {
+		switch (format) {
+		case "yaml":
+			ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+			log(mapper.writeValueAsString(object));
+			break;
+		case "json":
+			mapper = new ObjectMapper();
+			log(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(object));
+			break;
+		default:
+			Pod pod = null;
+			if(Pod.class.isInstance(object)) {
+				pod = (Pod)object;
+			}
+			TableBuilder builder = new TableBuilder();
+			builder.addRow("Pod\n");
+			builder.addRow("NAME", "STATUS", "IP");
+			builder.addRow("====", "======", "==");
+			builder.addRow(pod.getMetadata().getName(),
+					pod.getStatus().getPhase(),
+					pod.getStatus().getPodIP());
+			log(builder.toString());
+			break;
+		}
 	}
 
 }
